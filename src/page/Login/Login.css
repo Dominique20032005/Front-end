@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.div_inp {
+    border: 2px solid #080808;
+}

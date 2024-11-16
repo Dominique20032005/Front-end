@@ -25,7 +25,7 @@ const Register = () => {
                 <p>If you already registered an account, <Link to='/login'>Login here!</Link></p>
             </div>
             <div>
-                <button type="submit">Sign up</button>
+                <button type="submit"><Link to='/login'>Sign up</Link></button>
             </div>
         </div>
     </>

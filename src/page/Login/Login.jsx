@@ -5,11 +5,11 @@ import './Login.css'
 const Login = () => {
   return (
     <>
-        <div className=''>
-            <div>
+        <div className='div_inp w-full h-screen flex items-center justify-center flex-col'>
+            <div className='my-5'>
                 <h1>LOGIN</h1>
             </div>
-            <div>
+            <div className=''>
                 <label>Username: </label>
                 <input type="text" placeholder='username' required tabIndex='1' />
             </div>
@@ -21,7 +21,7 @@ const Login = () => {
                 <p>Don't have an account? <Link to='/register'>Sign up here!</Link></p>
             </div>
             <div>
-                <button type="submit">Login</button>
+                <button type="submit"><Link to='/'>Login</Link></button>
             </div>
         </div>
     </>
