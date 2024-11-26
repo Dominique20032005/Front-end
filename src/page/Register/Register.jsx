@@ -4,22 +4,28 @@ import './Register.css'
 
 const Register = () => {
   return (
-    <>
-        <div className=''>
+    <div className='w-full h-screen flex justify-center items-center'>
+        <div className='inpForm w-fit h-fit flex items-center justify-center flex-col rounded-md p-5'>
             <div>
                 <h1>REGISTER</h1>
             </div>
-            <div>
-                <label htmlFor="">Username:</label>
-                <input type="text" placeholder='username' required tabIndex='1' />
+            <div className='flex items-center my-3'>
+                <label htmlFor="">
+                    <span class="material-symbols-outlined text-4xl mx-2">person</span>
+                </label>
+                <input type="text" className='inp w-48 h-8' placeholder='username' required tabIndex='1' />
             </div>
-            <div>
-                <label htmlFor="">Email:</label>
-                <input type="email" placeholder='email' required tabIndex='2' />
+            <div className='flex items-center my-3'>
+                <label htmlFor="">
+                    <span className="material-symbols-outlined text-4xl mx-2">mail</span>
+                </label>
+                <input type="email" className='inp w-48 h-8' placeholder='email' required tabIndex='2' />
             </div>
-            <div>
-                <label htmlFor="">Password:</label>
-                <input type="password" placeholder='password' required tabIndex='3' />
+            <div className='flex items-center my-3'>
+                <label htmlFor="">
+                    <span class="material-symbols-outlined text-4xl mx-2">password</span>
+                </label>
+                <input type="password" className='inp w-48 h-8' placeholder='password' required tabIndex='3' />
             </div>
             <div>
                 <p>If you already registered an account, <Link to='/login'>Login here!</Link></p>
@@ -28,7 +34,7 @@ const Register = () => {
                 <button type="submit"><Link to='/login'>Sign up</Link></button>
             </div>
         </div>
-    </>
+    </div>
   )
 }
 
