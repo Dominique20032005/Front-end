@@ -8,7 +8,7 @@ const Main = () => {
   return (
     <>
       <Header></Header>
-      <div className='board w-full h-screen flex items-center justify-center flex-col'>
+      <div className='board w-full h-screen flex items-center justify-center'>
         <h1>Welcome to UIT-Learning. Join with us for more interesting content</h1>
         <div className='new-Post flex items-center flex-col'>
           <h3>New post</h3>
