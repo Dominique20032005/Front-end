@@ -1,0 +1,10 @@
+.box {
+    border: 1px solid #080808;
+    background-color: darkseagreen;
+}
+
+.box:hover {
+    transition: 0.5s ease-in-out;
+    animation-delay: 0.5ms;
+    background-color:dodgerblue;
+}

@@ -9,14 +9,14 @@ const Header = () => {
         <h1 className='font-mono '>LEARNING</h1>
       </div>
       <div>
-        <Link className='px-10' to='/'>Home</Link>
-        <Link className='px-10' to='/about'>About</Link>
-        <Link className='px-10' to='/post'>Post</Link>
+        <Link className='box mx-10 p-3 rounded-md' to='/'>Home</Link>
+        <Link className='box mx-10 p-3 rounded-md' to='/about'>About</Link>
+        <Link className='box mx-10 p-3 rounded-md' to='/post'>Post</Link>
       </div>
       <div>
-        <button className='p-5'><Link to='/login'>Log out</Link></button>
-        <button className='p-5'><Link to='/login'>Log in</Link></button>
-        <button className='p-5'><Link to='/register'>Register</Link></button>
+        <button className='box m-5 p-2.5 rounded-md'><Link to='/login'>Log out</Link></button>
+        <button className='box m-5 p-2.5 rounded-md'><Link to='/login'>Log in</Link></button>
+        <button className='box m-5 p-2.5 rounded-md'><Link to='/register'>Register</Link></button>
       </div>
     </header>
   )
