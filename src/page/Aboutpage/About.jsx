@@ -9,7 +9,7 @@ const About = () => {
       <div className='board w-full h-screen flex items-center justify-center flex-col'>
         <h1>UIT-Learning</h1>
         <p>Created and designed on Dec 7th 2024, UIT-Learning is the place where you can share and explore.</p>
-        <p>We hope that UIT-Learning can help you with your education process, meet new people, learning new things that you wanted.</p>
+        <p>We hope that UIT-Learning can help you with your education process, meet new people, and explore more about future prospects.</p>
         <div className="stat w-fit flex justify-evenly gap-x-20 py-3">
           <div className='stats w-full flex items-center justify-center flex-col'>
             <h2>2</h2>
