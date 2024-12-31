@@ -1,138 +1,311 @@
-import { useState } from 'react';
-import { MoreHorizontal, MessageCircle, Bookmark, ThumbsUp, Trash2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { botttsNeutral } from "@dicebear/collection";
+import { createAvatar } from "@dicebear/core";
+import { format } from "date-fns";
+import {
+  MoreHorizontal,
+  MessageCircle,
+  Bookmark,
+  ThumbsUp,
+  Trash2,
+} from "lucide-react";
+import { useApiStorage } from "../hooks/useApiStorage";
+import DeletePostModal from "./DeletePostModal";
 
 export default function PostInfo() {
-  const [isLiked, setIsLiked] = useState(false);
-  const [showChatBox, setShowChatBox] = useState(false);
-  const [comment, setComment] = useState('');
-  const [comments, setComments] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [showChatBox, setShowChatBox] = useState(() => {
+    const savedState = localStorage.getItem("showChatBoxState");
+    return savedState ? JSON.parse(savedState) : {};
+  });
+  const [newComments, setNewComments] = useState(() => {
+    const savedComments = localStorage.getItem("newCommentsState");
+    return savedComments ? JSON.parse(savedComments) : {};
+  });
+  // const [likedPosts, setLikedPosts] = useState(() => {
+  //   const savedLikes = localStorage.getItem("likedPostsState");
+  //   return savedLikes ? JSON.parse(savedLikes) : {};
+  // });
+  // const [savedPosts, setSavedPosts] = useState(() => {
+  //   const savedPostsState = localStorage.getItem("savedPostsState");
+  //   return savedPostsState ? JSON.parse(savedPostsState) : {};
+  // });
 
-  const handleLikeClick = () => {
-    setIsLiked(!isLiked);
-  };
+  const {
+    getPostList,
+    deletePost,
+    likePost,
+    savePost,
+    // getLikesCount,
+    // getSaveCount,
+    posts,
+  } = useApiStorage();
 
-  const handleToggleChatBox = () => {
-    setShowChatBox(!showChatBox);
-  };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        await getPostList();
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+    fetchPosts();
+  }, [getPostList]);
 
-  const handleAddComment = () => {
-    if (comment.trim() !== '') {
-      setComments([...comments, comment]);
-      setComment('');
+  useEffect(() => {
+    localStorage.setItem("showChatBoxState", JSON.stringify(showChatBox));
+  }, [showChatBox]);
+
+  useEffect(() => {
+    localStorage.setItem("newCommentsState", JSON.stringify(newComments));
+  }, [newComments]);
+
+  const handleLikeClick = async (postId) => {
+    try {
+      await likePost(postId);
+      await getPostList();
+      // await getLikesCount(postId);
+      // setLikedPosts((prev) => {
+      //   const updatedLikes = {
+      //     ...prev,
+      //     [postId]: !prev[postId],
+      //   };
+      //   localStorage.setItem("likedPostsState", JSON.stringify(updatedLikes));
+      //   return updatedLikes;
+      // });
+    } catch (error) {
+      console.error("Failed to like/unlike post:", error);
     }
   };
 
+  const handleSaveClick = async (postId) => {
+    try {
+      await savePost(postId);
+      await getPostList();
+    } catch (error) {
+      console.error("Failed to save/unsave post:", error);
+    }
+  };
+
+  const handleDeleteClick = (postId) => {
+    setPostToDelete(postId);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deletePost(postToDelete);
+      await getPostList();
+
+      setPostToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false);
+    setPostToDelete(null);
+  };
+
+  const handleToggleChatBox = (postId) => {
+    setShowChatBox((prev) => {
+      const updatedState = {
+        ...prev,
+        [postId]: !prev[postId],
+      };
+      localStorage.setItem("showChatBoxState", JSON.stringify(updatedState));
+      return updatedState;
+    });
+  };
+
+  const handleAddComment = (postId) => {
+    if (newComments[postId]?.trim() !== "") {
+      console.log(`New comment for post ${postId}:`, newComments[postId]);
+      setNewComments((prev) => {
+        const updatedComments = { ...prev, [postId]: "" };
+        localStorage.setItem(
+          "newCommentsState",
+          JSON.stringify(updatedComments)
+        );
+        return updatedComments;
+      });
+    }
+  };
+
+  const generateAvatar = (name) => {
+    return createAvatar(botttsNeutral, {
+      seed: name,
+    }).toDataUri();
+  };
+
   return (
-    <div className="max-w-xl bg-[#23272A] rounded-lg shadow-lg p-4 relative">
-      {/* Delete and More Options */}
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-2">
-          <div className="relative w-10 h-10">
-            <img
-              src="/placeholder.svg"
-              alt="VTV24 logo"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white">VTV24</h2>
-            <p className="text-sm text-gray-400">18 phút</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="p-2 text-gray-400 hover:bg-gray-800 hover:text-red-500 rounded-full transition-colors"
-            onClick={() => alert('Post deleted!')}
-          >
-            <Trash2 className="w-5 h-5" />
-          </button>
-          <button className="p-2 hover:bg-gray-800/50 rounded-full transition-colors">
-            <MoreHorizontal className="w-5 h-5 text-gray-400" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="relative">
-        <div className="aspect-video bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 p-8 flex items-center justify-center backdrop-blur-xl bg-opacity-80">
-          <h1 className="text-white text-center text-2xl font-bold leading-tight">
-            Phẫu thuật cắt bỏ khối u khổng lồ nặng 5kg, cứu sống bệnh nhân
-          </h1>
-        </div>
-      </div>
-
-      {/* Engagement Stats */}
-      <div className="px-4 py-2 border-b border-gray-800">
-        <div className="flex items-center justify-between text-sm text-gray-400">
-          <div className="flex items-center gap-1">
-            <ThumbsUp
-              className={`w-4 h-4 ${
-                isLiked ? 'text-teal-400 fill-current' : 'text-gray-400'
-              }`}
-            />
-            <span>{isLiked ? '1.4K' : '1.3K'}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>{comments.length} bình luận</span>
-            <span>5 lượt chia sẻ</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex items-center justify-between px-4 py-2">
-        <button
-          className={`flex items-center gap-2 px-4 py-2 hover:bg-gray-800/50 rounded-lg transition-colors ${
-            isLiked ? 'text-teal-400' : 'text-gray-300'
-          }`}
-          onClick={handleLikeClick}
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span>Likes</span>
-        </button>
-        <button
-          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800/50 rounded-lg transition-colors text-gray-300"
-          onClick={handleToggleChatBox}
-        >
-          <MessageCircle className="w-5 h-5" />
-          <span>Comments</span>
-        </button>
-        <button className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800/50 rounded-lg transition-colors text-gray-300">
-          <Bookmark className="w-5 h-5" />
-          <span>Save</span>
-        </button>
-      </div>
-
-      {/* Chat Box */}
-      {showChatBox && (
-        <div className="mt-4 bg-[#1A1D1F] p-4 rounded-lg shadow-lg">
-          <h3 className="text-gray-300 font-semibold mb-2">Comments</h3>
-          <div className="space-y-2 mb-4">
-            {comments.map((c, index) => (
-              <p key={index} className="text-gray-400 text-sm">
-                {c}
-              </p>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              className="flex-grow bg-gray-800 text-gray-300 p-2 rounded-lg"
-              placeholder="Write a comment..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <button
-              className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg"
-              onClick={handleAddComment}
+    <div className="w-[37%] mx-auto bg-[#23272A] rounded-lg shadow-lg p-8 relative">
+      {posts && posts.length > 0 ? (
+        posts.map((post) => {
+          return (
+            <div
+              key={post.id}
+              className="post-item bg-[#1E2124] rounded-lg mb-6 p-6 shadow-sm"
             >
-              Post
-            </button>
-          </div>
-        </div>
+              {/* Post Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-gray-800">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={generateAvatar(post.user.avatar)}
+                    alt="User Avatar"
+                    className="w-14 h-14 rounded-full"
+                  />
+                  <div>
+                    <h2 className="font-semibold text-white text-lg">
+                      {post.user.userName}
+                    </h2>
+                    <p className="text-sm text-gray-400">
+                      {format(new Date(post.createdAt), "dd/MM/yyyy")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="p-2 text-gray-400 hover:bg-gray-800 hover:text-red-500 rounded-full transition-colors"
+                    onClick={() => handleDeleteClick(post.id)}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                  <button className="p-2 hover:bg-gray-800/50 rounded-full transition-colors">
+                    <MoreHorizontal className="w-5 h-5 text-gray-400" />
+                  </button>
+                </div>
+              </div>
+              {/* Post Content */}
+              <div className="mt-4">
+                <p className="text-white text-sm leading-relaxed whitespace-pre-line bg-[#2A2E33] p-4 rounded-lg">
+                  {post.content}
+                </p>
+              </div>
+              {/* Uploaded Files Section */}
+              <div className="mt-4 border-t border-gray-800 pt-4">
+                <h3 className="text-gray-400 font-semibold mb-2">
+                  Uploaded Files:
+                </h3>
+                <div className="space-y-2">
+                  {post.files && post.files.length > 0 ? (
+                    post.files.map((file, index) => (
+                      <a
+                        key={index}
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-teal-400 hover:underline"
+                      >
+                        {file.fileName}
+                      </a>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No files uploaded.</p>
+                  )}
+                </div>
+                {/* Likes and Saves Count */}
+                <div className="flex items-center gap-4 mt-2">
+                  <span className="text-sm text-gray-400">
+                    {post.totalLikes} Likes
+                  </span>
+                  <span className="text-sm text-gray-400">
+                    {post.totalSaves} Saves
+                  </span>
+                </div>
+              </div>
+              {/* Engagement Stats */}
+              <div className="flex items-center justify-between mt-4 text-sm text-gray-400">
+                <button
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    post.likedByCurrentUser ? "text-teal-400" : "text-gray-300"
+                  }`}
+                  onClick={() => handleLikeClick(post.id)}
+                >
+                  <ThumbsUp
+                    className={`w-5 h-5 ${
+                      post.likedByCurrentUser ? "fill-current text-teal-400" : ""
+                    }`}
+                  />
+                  <span>Like</span>
+                </button>
+                <button
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800/50 rounded-lg transition-colors text-gray-300"
+                  onClick={() => handleToggleChatBox(post.id)}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Comments</span>
+                </button>
+                <button
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    post.savedByCurrentUser ? "text-teal-400" : "text-gray-300"
+                  }`}
+                  onClick={() => handleSaveClick(post.id)}
+                >
+                  <Bookmark
+                    className={`w-5 h-5 ${
+                      post.savedByCurrentUser ? "fill-current text-teal-400" : ""
+                    }`}
+                  />
+                  <span>Save</span>
+                </button>
+              </div>
+
+              {/* Comments Section */}
+              {showChatBox[post.id] && (
+                <div className="mt-4 border-t border-gray-800 pt-4">
+                  <h3 className="text-gray-400 font-semibold mb-2">
+                    Comments:
+                  </h3>
+                  <div className="space-y-2">
+                    {post.comments && post.comments.length > 0 ? (
+                      post.comments.map((comment, index) => (
+                        <p key={index} className="text-gray-300">
+                          {comment}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">No comments yet.</p>
+                    )}
+                  </div>
+                  <div className="mt-4 flex items-center gap-2">
+                    <input
+                      type="text"
+                      className="flex-1 bg-[#2A2E33] text-gray-300 rounded-lg p-2 border border-gray-600 focus:outline-none"
+                      placeholder="Write a comment..."
+                      value={newComments[post.id] || ""}
+                      onChange={(e) =>
+                        setNewComments((prev) => ({
+                          ...prev,
+                          [post.id]: e.target.value,
+                        }))
+                      }
+                    />
+                    <button
+                      className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
+                      onClick={() => handleAddComment(post.id)}
+                    >
+                      Post
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })
+      ) : (
+        <p className="text-gray-400">No posts found.</p>
       )}
+      {/* Delete Post Modal */}
+      <DeletePostModal
+        isOpen={isModalOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 }
