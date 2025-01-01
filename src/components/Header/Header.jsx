@@ -9,7 +9,7 @@ import { botttsNeutral } from "@dicebear/collection";
 
 const Header = () => {
   const { isLoggedIn, setLogin, user } = useAuthStorage(); 
-  const { logOut } = useApiStorage();
+  const { logOut, getPostList } = useApiStorage();
   const location = useLocation();
   const [showAuthButtons, setShowAuthButtons] = useState(true);
   const [avatar, setAvatar] = useState(null); 
@@ -35,6 +35,7 @@ const Header = () => {
       const toastId = toast.loading("Logging out...");
 
       await logOut();
+      await getPostList();
 
       toast.success("Logout successful!", {
         id: toastId,
@@ -60,7 +61,7 @@ const Header = () => {
     <header className="flex items-center justify-between px-6 py-4 bg-gray-800 text-gray-200 shadow-md">
       {/* Logo */}
       <div className="text-2xl font-bold text-teal-400">
-        <h1>LEARNING</h1>
+        <h1>LEARNING-SOCIAL</h1>
       </div>
 
       {/* Navigation Links - Centered */}

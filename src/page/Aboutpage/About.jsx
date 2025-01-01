@@ -2,43 +2,62 @@ import React from 'react'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 
-const About = () => {
+export default function About() {
   return (
-    <>
+    <div className="min-h-screen bg-gray-900 text-gray-100">
       <Header />
-      <div className='board w-full h-screen flex items-center justify-center flex-col'>
-        <h1>UIT-Learning</h1>
-        <p>Created and designed on Dec 7th 2024, UIT-Learning is the place where you can share and explore.</p>
-        <p>We hope that UIT-Learning can help you with your education process, meet new people, learning new things that you wanted.</p>
-        <div className="stat w-fit flex justify-evenly gap-x-20 py-3">
-          <div className='stats w-full flex items-center justify-center flex-col'>
-            <h2>2</h2>
-            <p>Creators</p>
+      <main className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto space-y-12">
+          {/* Hero Section */}
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-400 to-teal-500 bg-clip-text text-transparent">
+              LEARNING-SOCIAL
+            </h1>
+            <div className="space-y-3 text-gray-300">
+              <p className="text-lg">
+                Created and designed on Dec 7th 2024, Learning Social is the place where you can share and explore.
+              </p>
+              <p className="text-lg">
+                We hope that Learning Social can help you with your education process, meet new people, learning new things that you wanted.
+              </p>
+            </div>
           </div>
-          <div className='stats w-full flex items-center justify-center flex-col'>
-            <h2>20</h2>
-            <p>Members</p>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+            {[
+              { number: "2", label: "Creators" },
+              { number: "20", label: "Members" },
+              { number: "3", label: "Platforms" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center p-6 rounded-lg bg-gray-800/50 backdrop-blur border border-gray-700">
+                <div className="text-3xl font-bold text-teal-400 mb-2">{stat.number}</div>
+                <div className="text-gray-400">{stat.label}</div>
+              </div>
+            ))}
           </div>
-          <div className='stats w-full flex items-center justify-center flex-col'>
-            <h2>10</h2>
-            <p>Posts</p>
+
+          {/* Creators Section */}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-center text-teal-400">Creators</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {[
+                { name: "Nguyen Huu Anh Duc", id: "23560009" },
+                { name: "Ho Huy Thien", id: "23560063" },
+              ].map((creator) => (
+                <div 
+                  key={creator.id} 
+                  className="p-6 rounded-lg bg-gray-800/50 backdrop-blur border border-gray-700 text-center space-y-2"
+                >
+                  <h3 className="text-xl font-semibold text-gray-100">{creator.name}</h3>
+                  <p className="text-gray-400">ID: {creator.id}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <h3>Creators</h3>
-        <div className="creator w-fit flex items-center justify-evenly gap-x-20">
-          <div className="person w-full flex items-center justify-center flex-col">
-            <h1 className='text-center'>Nguyen Huu Anh Duc</h1>
-            <h3>ID: 23560009</h3>
-          </div>
-          <div className="person w-full flex items-center justify-center flex-col">
-            <h1>Ho Huy Thien</h1>
-            <h3>ID: 23560063</h3>
-          </div>
-        </div>
-      </div>
+      </main>
       <Footer />
-    </>
+    </div>
   )
 }
-
-export default About

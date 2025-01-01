@@ -1,9 +1,10 @@
+// Updated PostInfo Component
 import { useEffect, useState } from "react";
 import { botttsNeutral } from "@dicebear/collection";
 import { createAvatar } from "@dicebear/core";
 import { format } from "date-fns";
 import {
-  MoreHorizontal,
+  Download,
   MessageCircle,
   Bookmark,
   ThumbsUp,
@@ -23,22 +24,13 @@ export default function PostInfo() {
     const savedComments = localStorage.getItem("newCommentsState");
     return savedComments ? JSON.parse(savedComments) : {};
   });
-  // const [likedPosts, setLikedPosts] = useState(() => {
-  //   const savedLikes = localStorage.getItem("likedPostsState");
-  //   return savedLikes ? JSON.parse(savedLikes) : {};
-  // });
-  // const [savedPosts, setSavedPosts] = useState(() => {
-  //   const savedPostsState = localStorage.getItem("savedPostsState");
-  //   return savedPostsState ? JSON.parse(savedPostsState) : {};
-  // });
 
   const {
     getPostList,
     deletePost,
     likePost,
     savePost,
-    // getLikesCount,
-    // getSaveCount,
+    downloadFile,
     posts,
   } = useApiStorage();
 
@@ -65,15 +57,6 @@ export default function PostInfo() {
     try {
       await likePost(postId);
       await getPostList();
-      // await getLikesCount(postId);
-      // setLikedPosts((prev) => {
-      //   const updatedLikes = {
-      //     ...prev,
-      //     [postId]: !prev[postId],
-      //   };
-      //   localStorage.setItem("likedPostsState", JSON.stringify(updatedLikes));
-      //   return updatedLikes;
-      // });
     } catch (error) {
       console.error("Failed to like/unlike post:", error);
     }
@@ -136,6 +119,14 @@ export default function PostInfo() {
     }
   };
 
+  const handleDownloadFile = async (postId, file) => {
+    try {
+      await downloadFile(postId, file.id, file.fileName);
+    } catch (error) {
+      console.error("Failed to download file:", error);
+    }
+  };
+
   const generateAvatar = (name) => {
     return createAvatar(botttsNeutral, {
       seed: name,
@@ -145,7 +136,7 @@ export default function PostInfo() {
   return (
     <div className="w-[37%] mx-auto bg-[#23272A] rounded-lg shadow-lg p-8 relative">
       {posts && posts.length > 0 ? (
-        posts.map((post) => {
+       [...posts].reverse().map((post) => {
           return (
             <div
               key={post.id}
@@ -175,8 +166,15 @@ export default function PostInfo() {
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
-                  <button className="p-2 hover:bg-gray-800/50 rounded-full transition-colors">
-                    <MoreHorizontal className="w-5 h-5 text-gray-400" />
+                  <button
+                    className="p-2 text-gray-400 hover:bg-gray-800 hover:text-green-500 rounded-full transition-colors"
+                    onClick={() =>
+                      post.files.forEach((file) =>
+                        handleDownloadFile(post.id, file)
+                      )
+                    }
+                  >
+                    <Download className="w-5 h-5" />
                   </button>
                 </div>
               </div>

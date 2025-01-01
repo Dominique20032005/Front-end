@@ -9,12 +9,7 @@ const Footer = () => {
       {/* Logo and Description */}
       <div className="flex flex-col space-y-1 max-w-md">
         <div className="flex items-center space-x-2">
-          <img
-            src="/path/to/logo.png" 
-            alt="Logo"
-            className="w-8 h-8"
-          />
-          <h1 className="text-base font-bold">Learning Platform</h1>
+          <h1 className="text-base font-bold">Learning Social</h1>
         </div>
         <p className="text-sm text-gray-400"> 
           Created and designed on Dec 7th 2024, UIT-Learning is the place where you can share and explore. We hope that UIT-Learning can help you with your education process, meet new people, learning new things that you wanted.

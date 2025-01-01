@@ -7,6 +7,7 @@ import CreatePostForm from "../../components/CreatePostForm";
 import AuthenticateOverlay from "../../components/AuthenticateOverlay";
 import { useAuthStorage } from "../../hooks/useAuthStrorage";
 import { useApiStorage } from "../../hooks/useApiStorage";
+import { toast } from "react-hot-toast";
 
 const Post = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -15,14 +16,17 @@ const Post = () => {
   const { createPost, getPostList } = useApiStorage();
 
   const handleCreatePost = async ({ content, files }) => {
+    const postToast = toast.loading("Creating post...");
+
     try {
       await createPost({ content, files });
-
       await getPostList();
+
+      toast.success("Post created successfully!", { id: postToast });
       setIsFormVisible(false);
     } catch (error) {
       console.error("Error creating post:", error);
-      alert("Failed to create post. Please try again.");
+      toast.error("Failed to create post. Please try again.", { id: postToast });
     }
   };
 
@@ -39,7 +43,7 @@ const Post = () => {
   };
 
   return (
-    <div className="bg-[#1A1D1F] text-gray-300 min-h-screen flex flex-col relative">
+    <div className="bg-gray-900 text-gray-100 min-h-screen flex flex-col relative">
       {/* Overlay when the Create Post Form is visible */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md z-40 transition-opacity duration-500 ease-in-out"></div>
@@ -53,7 +57,7 @@ const Post = () => {
         onCloseForm={handleCloseForm}
       />
       <main className="flex-grow flex flex-col items-center justify-start p-4 space-y-4">
-        <PostInfo/>
+        <PostInfo />
       </main>
       <Footer />
 

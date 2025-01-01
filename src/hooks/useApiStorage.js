@@ -259,5 +259,33 @@ export const useApiStorage = create(
         throw err;
       }
     },
+
+    downloadFile: async (postId, fileId, fileName) => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/posts/${postId}/files/${fileId}/download`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+    
+        if (!response.ok) {
+          throw new Error("Failed to download file");
+        }
+    
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (err) {
+        console.error("Download file error:", err);
+        throw new Error("An error occurred while downloading the file.");
+      }
+    },    
   })
 );
