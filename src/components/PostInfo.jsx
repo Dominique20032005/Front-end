@@ -1,8 +1,8 @@
-// Updated PostInfo Component
 import { useEffect, useState } from "react";
 import { botttsNeutral } from "@dicebear/collection";
 import { createAvatar } from "@dicebear/core";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 import {
   Download,
   MessageCircle,
@@ -10,8 +10,13 @@ import {
   ThumbsUp,
   Trash2,
 } from "lucide-react";
+import { useAuthStorage } from "../hooks/useAuthStrorage";
 import { useApiStorage } from "../hooks/useApiStorage";
 import DeletePostModal from "./DeletePostModal";
+const animationVariants = {
+  hidden: { opacity: 0, y: -50 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export default function PostInfo() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,14 +30,10 @@ export default function PostInfo() {
     return savedComments ? JSON.parse(savedComments) : {};
   });
 
-  const {
-    getPostList,
-    deletePost,
-    likePost,
-    savePost,
-    downloadFile,
-    posts,
-  } = useApiStorage();
+  const { user, isLoggedIn } = useAuthStorage();
+
+  const { getPostList, deletePost, likePost, savePost, downloadFile, posts } =
+    useApiStorage();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -136,11 +137,17 @@ export default function PostInfo() {
   return (
     <div className="w-[37%] mx-auto bg-[#23272A] rounded-lg shadow-lg p-8 relative">
       {posts && posts.length > 0 ? (
-       [...posts].reverse().map((post) => {
+        [...posts].reverse().map((post, index) => {
+          const isNewPost = index === 0;
+          const isCurrentUser = user?.id === post.user.id;
           return (
-            <div
+            <motion.div
               key={post.id}
               className="post-item bg-[#1E2124] rounded-lg mb-6 p-6 shadow-sm"
+              initial="hidden"
+              animate="visible"
+              variants={animationVariants}
+              transition={{ duration: 0.5, delay: isNewPost ? 0 : 0.2 }}
             >
               {/* Post Header */}
               <div className="flex items-center justify-between pb-4 border-b border-gray-800">
@@ -160,22 +167,26 @@ export default function PostInfo() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    className="p-2 text-gray-400 hover:bg-gray-800 hover:text-red-500 rounded-full transition-colors"
-                    onClick={() => handleDeleteClick(post.id)}
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                  <button
-                    className="p-2 text-gray-400 hover:bg-gray-800 hover:text-green-500 rounded-full transition-colors"
-                    onClick={() =>
-                      post.files.forEach((file) =>
-                        handleDownloadFile(post.id, file)
-                      )
-                    }
-                  >
-                    <Download className="w-5 h-5" />
-                  </button>
+                  {isCurrentUser && (
+                    <button
+                      className="p-2 text-gray-400 hover:bg-gray-800 hover:text-red-500 rounded-full transition-colors"
+                      onClick={() => handleDeleteClick(post.id)}
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
+                  {isLoggedIn && (
+                    <button
+                      className="p-2 text-gray-400 hover:bg-gray-800 hover:text-green-500 rounded-full transition-colors"
+                      onClick={() =>
+                        post.files.forEach((file) =>
+                          handleDownloadFile(post.id, file)
+                        )
+                      }
+                    >
+                      <Download className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
               </div>
               {/* Post Content */}
@@ -226,7 +237,9 @@ export default function PostInfo() {
                 >
                   <ThumbsUp
                     className={`w-5 h-5 ${
-                      post.likedByCurrentUser ? "fill-current text-teal-400" : ""
+                      post.likedByCurrentUser
+                        ? "fill-current text-teal-400"
+                        : ""
                     }`}
                   />
                   <span>Like</span>
@@ -246,7 +259,9 @@ export default function PostInfo() {
                 >
                   <Bookmark
                     className={`w-5 h-5 ${
-                      post.savedByCurrentUser ? "fill-current text-teal-400" : ""
+                      post.savedByCurrentUser
+                        ? "fill-current text-teal-400"
+                        : ""
                     }`}
                   />
                   <span>Save</span>
@@ -292,7 +307,7 @@ export default function PostInfo() {
                   </div>
                 </div>
               )}
-            </div>
+            </motion.div>
           );
         })
       ) : (
