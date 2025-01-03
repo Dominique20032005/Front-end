@@ -11,10 +11,16 @@ import {
 } from "lucide-react";
 import { useAuthStorage } from "../hooks/useAuthStrorage";
 import { useApiStorage } from "../hooks/useApiStorage";
-import DeletePostModal from "./DeletePostModal";
 
-
-export default function PostInfo({ isNewPost, isCurrentUser, setPostToDelete, setIsDeleteModalOpen, post }) {
+export default function PostInfo({
+  isCurrentUser,
+  setPostToDelete,
+  setIsDeleteModalOpen,
+  post,
+  ShouldRenderDeleteBtn = true,
+  handleLikeClick,
+  handleSaveClick,
+}) {
   const [showChatBox, setShowChatBox] = useState(() => {
     const savedState = localStorage.getItem("showChatBoxState");
     return savedState ? JSON.parse(savedState) : {};
@@ -36,24 +42,6 @@ export default function PostInfo({ isNewPost, isCurrentUser, setPostToDelete, se
   useEffect(() => {
     localStorage.setItem("newCommentsState", JSON.stringify(newComments));
   }, [newComments]);
-
-  const handleLikeClick = async (postId) => {
-    try {
-      await likePost(postId);
-      await getPostList();
-    } catch (error) {
-      console.error("Failed to like/unlike post:", error);
-    }
-  };
-
-  const handleSaveClick = async (postId) => {
-    try {
-      await savePost(postId);
-      await getPostList();
-    } catch (error) {
-      console.error("Failed to save/unsave post:", error);
-    }
-  };
 
   const handleDeleteClick = (postId) => {
     setPostToDelete(postId);
@@ -100,7 +88,7 @@ export default function PostInfo({ isNewPost, isCurrentUser, setPostToDelete, se
   };
 
   return (
-     <>
+    <>
       {/* Post Header */}
       <div className="flex items-center justify-between pb-4 border-b border-gray-800">
         <div className="flex items-center gap-3">
@@ -119,7 +107,7 @@ export default function PostInfo({ isNewPost, isCurrentUser, setPostToDelete, se
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {isCurrentUser && (
+          {isCurrentUser && ShouldRenderDeleteBtn && (
             <button
               className="p-2 text-gray-400 hover:bg-gray-800 hover:text-red-500 rounded-full transition-colors"
               onClick={() => handleDeleteClick(post.id)}
@@ -247,12 +235,4 @@ export default function PostInfo({ isNewPost, isCurrentUser, setPostToDelete, se
       )}
     </>
   );
-
-  // {
-  //   /* Delete Post Modal */}
-  // <DeletePostModal
-  //   isOpen={isModalOpen}
-  //   onConfirm={handleConfirmDelete}
-  //   onCancel={handleCancelDelete}
-  // />
 }

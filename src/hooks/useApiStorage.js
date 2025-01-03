@@ -110,9 +110,10 @@ export const useApiStorage = create(
       }
     },
 
-    getPostList: async () => {
+    getPostList: async ({ query } = {}) => {
       try {
-        const response = await fetch(`${API_BASE_URL}/posts`, {
+        const queryString = new URLSearchParams(query).toString();
+        const response = await fetch(`${API_BASE_URL}/posts?${queryString}`, {
           credentials: "include",
         });
 

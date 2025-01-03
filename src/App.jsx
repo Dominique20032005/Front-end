@@ -6,6 +6,7 @@ import About from "./page/Aboutpage/About";
 import Post from "./page/Postpage/Post";
 import Login from "./page/Login/Login";
 import Signup from "./page/Signup/Signup";
+import SavePost from "./page/SavePostpage/SavePost";
 import "./App.css";
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/" element={<Main />} />
         <Route path="/about" element={<About />} />
         <Route path="/post" element={<Post />} />
+        <Route path="/savePost" element={<SavePost />} />
       </Routes>
     </BrowserRouter>
   );

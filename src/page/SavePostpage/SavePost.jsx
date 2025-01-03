@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from "react";
-import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import PostInfo from "../../components/PostInfo";
-import CreatePostButton from "../../components/CreatePostButton";
 import CreatePostForm from "../../components/CreatePostForm";
 import AuthenticateOverlay from "../../components/AuthenticateOverlay";
 import DeletePostModal from "../../components/DeletePostModal";
-import SavePostPageLink from "../../components/SavePostPageLink";
+import HeaderSavePost from "../../components/HeaderSavePost";
 import { useAuthStorage } from "../../hooks/useAuthStrorage";
 import { useApiStorage } from "../../hooks/useApiStorage";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 
-const Post = () => {
+const SavePost = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isAuthenticateModalOpen, setIsAuthenticateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const { isLoggedIn, user } = useAuthStorage();
-  const { createPost, getPostList, posts, deletePost, likePost, savePost } =
-    useApiStorage();
+  const { createPost, getPostList, posts, deletePost, savePost, likePost } = useApiStorage();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        await getPostList();
+        await getPostList({
+          query: {
+            savedByUser: true,
+          },
+        });
       } catch (error) {
         console.error("Failed to fetch posts:", error);
       }
@@ -42,7 +43,11 @@ const Post = () => {
 
     try {
       await createPost({ content, files });
-      await getPostList();
+      await getPostList({
+        query: {
+          savedByUser: true,
+        },
+      });
 
       toast.success("Post created successfully!", { id: postToast });
       setIsFormVisible(false);
@@ -70,7 +75,11 @@ const Post = () => {
   const handleConfirmDelete = async () => {
     try {
       await deletePost(postToDelete);
-      await getPostList();
+      await getPostList({
+        query: {
+          savedByUser: true,
+        },
+      });
 
       setPostToDelete(null);
     } catch (error) {
@@ -95,41 +104,23 @@ const Post = () => {
 
   const handleSaveClick = async (postId) => {
     try {
-      const currentPost = posts.find((post) => post.id === postId);
-
       await savePost(postId);
       await getPostList();
-
-      if (!currentPost.savedByCurrentUser) {
-        toast.success("Post has successfully been saved in your savePost section!");
-      }
     } catch (error) {
       console.error("Failed to save/unsave post:", error);
-      toast.error("Failed to save the post. Please try again.");
     }
   };
-  
-  
 
   return (
     <div className="bg-gray-900 text-gray-100 min-h-screen flex flex-col relative">
+      <HeaderSavePost />
+
       {/* Overlay when the Create Post Form is visible */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md z-40 transition-opacity duration-500 ease-in-out"></div>
       )}
 
       {/* Main content */}
-      <Header />
-
-      <div className="flex items-center space-x-4 px-4 py-2">
-        <CreatePostButton
-          onCreatePost={handleCreatePost}
-          onOpenForm={handleOpenForm}
-          onCloseForm={handleCloseForm}
-        />
-        <SavePostPageLink />
-      </div>
-
       <main className="flex-grow flex flex-col items-center justify-start p-4 space-y-4">
         <div className="w-[37%] mx-auto bg-[#23272A] rounded-lg shadow-lg p-8 relative">
           {posts && posts.length > 0 ? (
@@ -151,6 +142,7 @@ const Post = () => {
                     setPostToDelete={setPostToDelete}
                     setIsDeleteModalOpen={setIsDeleteModalOpen}
                     post={post}
+                    ShouldRenderDeleteBtn={false}
                     handleLikeClick={handleLikeClick}
                     handleSaveClick={handleSaveClick}
                   />
@@ -191,4 +183,4 @@ const Post = () => {
   );
 };
 
-export default Post;
+export default SavePost;
