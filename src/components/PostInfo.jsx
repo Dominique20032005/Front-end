@@ -116,14 +116,22 @@ export default function PostInfo({
             </button>
           )}
           {isLoggedIn && (
-            <button
-              className="p-2 text-gray-400 hover:bg-gray-800 hover:text-green-500 rounded-full transition-colors"
-              onClick={() =>
-                post.files.forEach((file) => handleDownloadFile(post.id, file))
-              }
-            >
-              <Download className="w-5 h-5" />
-            </button>
+            <div className="relative group">
+              <button
+                className="p-2 text-gray-400 hover:bg-gray-800 hover:text-green-500 rounded-full transition-colors"
+                onClick={() =>
+                  post.files.forEach((file) =>
+                    handleDownloadFile(post.id, file)
+                  )
+                }
+              >
+                <Download className="w-5 h-5" />
+              </button>
+              <div className="absolute top-1/2 left-full ml-3 -translate-y-1/2 px-3 py-2 bg-[#2D3748] text-gray-300 text-sm rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-350 ease-in-out whitespace-nowrap z-10">
+                <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-[#2D3748]"></div>
+                Download all files
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -139,15 +147,13 @@ export default function PostInfo({
         <div className="space-y-2">
           {post.files && post.files.length > 0 ? (
             post.files.map((file, index) => (
-              <a
+              <button
                 key={index}
-                href={file.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-teal-400 hover:underline"
+                onClick={() => handleDownloadFile(post.id, file)}
+                className="block text-teal-400 hover:underline text-left"
               >
                 {file.fileName}
-              </a>
+              </button>
             ))
           ) : (
             <p className="text-gray-500">No files uploaded.</p>

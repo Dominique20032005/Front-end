@@ -69,15 +69,7 @@ const SavePost = () => {
       });
     }
   };
-
-  const handleOpenForm = () => {
-    if (isLoggedIn) {
-      setIsFormVisible(true);
-    } else {
-      setIsAuthenticateModalOpen(true);
-    }
-  };
-
+  
   const handleCancelDelete = () => {
     setIsDeleteModalOpen(false);
     setPostToDelete(null);
