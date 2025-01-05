@@ -4,6 +4,7 @@ import PostInfo from "../../components/PostInfo";
 import CreatePostForm from "../../components/CreatePostForm";
 import AuthenticateOverlay from "../../components/AuthenticateOverlay";
 import DeletePostModal from "../../components/DeletePostModal";
+import UnsavePostModal from "../../components/UnsavePostModal";
 import HeaderSavePost from "../../components/HeaderSavePost";
 import { useAuthStorage } from "../../hooks/useAuthStrorage";
 import { useApiStorage } from "../../hooks/useApiStorage";
@@ -14,9 +15,19 @@ const SavePost = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isAuthenticateModalOpen, setIsAuthenticateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isUnsaveModalOpen, setIsUnsaveModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [postToUnsave, setPostToUnsave] = useState(null);
   const { isLoggedIn, user } = useAuthStorage();
-  const { createPost, getPostList, posts, deletePost, savePost, likePost } = useApiStorage();
+  const {
+    createPost,
+    getPostList,
+    posts,
+    deletePost,
+    savePost,
+    likePost,
+    setPostsFilterOptions,
+  } = useApiStorage();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -89,6 +100,28 @@ const SavePost = () => {
     }
   };
 
+  const handleCancelUnsave = () => {
+    setIsUnsaveModalOpen(false);
+    setPostToUnsave(null);
+  };
+
+  const handleConfirmUnsave = async () => {
+    try {
+      await savePost(postToUnsave);
+      await getPostList({
+        query: {
+          savedByUser: true,
+        },
+      });
+
+      setPostToUnsave(null);
+    } catch (error) {
+      console.error("Failed to unsave post:", error);
+    } finally {
+      setIsUnsaveModalOpen(false);
+    }
+  };
+
   const handleCloseForm = () => {
     setIsFormVisible(false);
   };
@@ -96,19 +129,19 @@ const SavePost = () => {
   const handleLikeClick = async (postId) => {
     try {
       await likePost(postId);
-      await getPostList();
+      await getPostList({
+        query: {
+          savedByUser: true,
+        },
+      });
     } catch (error) {
       console.error("Failed to like/unlike post:", error);
     }
   };
 
   const handleSaveClick = async (postId) => {
-    try {
-      await savePost(postId);
-      await getPostList();
-    } catch (error) {
-      console.error("Failed to save/unsave post:", error);
-    }
+    setPostToUnsave(postId);
+    setIsUnsaveModalOpen(true);
   };
 
   return (
@@ -159,6 +192,13 @@ const SavePost = () => {
           isOpen={isDeleteModalOpen}
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
+        />
+
+        {/* Unsave Post Modal */}
+        <UnsavePostModal
+          isOpen={isUnsaveModalOpen}
+          onConfirm={handleConfirmUnsave}
+          onCancel={handleCancelUnsave}
         />
       </main>
 
