@@ -1,12 +1,12 @@
-import React from 'react'
-import Header from '../../components/Header/Header'
-import Footer from '../../components/Footer/Footer'
+import React from 'react';
+import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-900 text-gray-100">
       <Header />
-      <main className="container mx-auto px-4 py-16">
+      <main className="flex-grow container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto space-y-12">
           {/* Hero Section */}
           <div className="text-center space-y-4">
@@ -26,11 +26,14 @@ export default function About() {
           {/* Stats Section */}
           <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             {[
-              { number: "2", label: "Creators" },
-              { number: "20", label: "Members" },
-              { number: "3", label: "Platforms" },
+              { number: '2', label: 'Creators' },
+              { number: '20', label: 'Members' },
+              { number: '3', label: 'Platforms' },
             ].map((stat) => (
-              <div key={stat.label} className="text-center p-6 rounded-lg bg-gray-800/50 backdrop-blur border border-gray-700">
+              <div
+                key={stat.label}
+                className="text-center p-6 rounded-lg bg-gray-800/50 backdrop-blur border border-gray-700"
+              >
                 <div className="text-3xl font-bold text-teal-400 mb-2">{stat.number}</div>
                 <div className="text-gray-400">{stat.label}</div>
               </div>
@@ -42,11 +45,11 @@ export default function About() {
             <h2 className="text-2xl font-bold text-center text-teal-400">Creators</h2>
             <div className="grid md:grid-cols-2 gap-8">
               {[
-                { name: "Nguyen Huu Anh Duc", id: "23560009" },
-                { name: "Ho Huy Thien", id: "23560063" },
+                { name: 'Nguyen Huu Anh Duc', id: '23560009' },
+                { name: 'Ho Huy Thien', id: '23560063' },
               ].map((creator) => (
-                <div 
-                  key={creator.id} 
+                <div
+                  key={creator.id}
                   className="p-6 rounded-lg bg-gray-800/50 backdrop-blur border border-gray-700 text-center space-y-2"
                 >
                   <h3 className="text-xl font-semibold text-gray-100">{creator.name}</h3>
@@ -59,5 +62,5 @@ export default function About() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
