@@ -67,7 +67,7 @@ const Header = () => {
       {/* Navigation Links - Centered */}
       <nav className="absolute left-1/2 transform -translate-x-1/2 flex space-x-8">
         <Link
-          className={`relative px-4 py-2 text-gray-200 transition duration-300 ease-in-out group ${
+          className={`relative px-4 py-2 oswald-bold text-gray-200 transition duration-300 ease-in-out group ${
             location.pathname === "/" ? "text-teal-400 font-bold" : "hover:text-teal-400"
           }`}
           to="/"
@@ -80,7 +80,7 @@ const Header = () => {
           ></span>
         </Link>
         <Link
-          className={`relative px-4 py-2 text-gray-200 transition duration-300 ease-in-out group ${
+          className={`relative px-4 py-2 oswald-bold text-gray-200 transition duration-300 ease-in-out group ${
             location.pathname === "/about" ? "text-teal-400 font-bold" : "hover:text-teal-400"
           }`}
           to="/about"
@@ -93,7 +93,7 @@ const Header = () => {
           ></span>
         </Link>
         <Link
-          className={`relative px-4 py-2 text-gray-200 transition duration-300 ease-in-out group ${
+          className={`relative px-4 py-2 oswald-bold text-gray-200 transition duration-300 ease-in-out group ${
             location.pathname === "/post" ? "text-teal-400 font-bold" : "hover:text-teal-400"
           }`}
           to="/post"
