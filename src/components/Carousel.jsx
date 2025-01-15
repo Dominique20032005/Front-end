@@ -32,10 +32,10 @@ const CarouselItem = ({ autoplay = true, interval = 1000, fade = true }) => {
       {carouselSlides.map((slide) => (
         <Carousel.Item key={slide.id}>
           <img
-            className="d-block w-100"
+            className="d-block w-full"
             src={slide.image}
             alt={slide.title}
-            style={{ height: '600px', width: '800px', objectFit: 'cover' }}
+            style={{ height: '600px', width: '900px', objectFit: 'cover' }}
           />
         </Carousel.Item>
       ))}
