@@ -10,11 +10,9 @@ const Main = () => {
     <>
       <Header></Header>
       <div className='board w-full h-screen flex items-center justify-center'>
-        <h1 className='oswald-regular'>Welcome to UIT-Learning. Join with us for more interesting content</h1>
-        <div className='new-Post flex items-center flex-col'>
-          <h3>New post</h3>
-          <div className='post'></div>
-          <h2>For more post? <Link to='/post'>Click here</Link></h2>
+        <div className="left">
+          <h1 className='oswald-regular text-4xl'>Welcome to Learning-Social. Join with us for more interesting content</h1>
+          <h2 className='text-2xl'>For more post? <Link to='/post' className='font-bold text-5xl cursor-pointer'>Click here</Link></h2>
         </div>
       </div>
       <Footer></Footer>
