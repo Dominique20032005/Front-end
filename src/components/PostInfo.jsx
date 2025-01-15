@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { botttsNeutral } from "@dicebear/collection";
 import { createAvatar } from "@dicebear/core";
 import { format } from "date-fns";
+
 import {
   Download,
   MessageCircle,
@@ -11,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuthStorage } from "../hooks/useAuthStrorage";
 import { useApiStorage } from "../hooks/useApiStorage";
+import CommentBox from "./CommentBox";
 
 export default function PostInfo({
   isCurrentUser,
@@ -204,40 +207,18 @@ export default function PostInfo({
 
       {/* Comments Section */}
       {showChatBox[post.id] && (
-        <div className="mt-4 border-t border-gray-800 pt-4">
-          <h3 className="text-gray-400 font-semibold mb-2">Comments:</h3>
-          <div className="space-y-2">
-            {post.comments && post.comments.length > 0 ? (
-              post.comments.map((comment, index) => (
-                <p key={index} className="text-gray-300">
-                  {comment}
-                </p>
-              ))
-            ) : (
-              <p className="text-gray-500">No comments yet.</p>
-            )}
-          </div>
-          <div className="mt-4 flex items-center gap-2">
-            <input
-              type="text"
-              className="flex-1 bg-[#2A2E33] text-gray-300 rounded-lg p-2 border border-gray-600 focus:outline-none"
-              placeholder="Write a comment..."
-              value={newComments[post.id] || ""}
-              onChange={(e) =>
-                setNewComments((prev) => ({
-                  ...prev,
-                  [post.id]: e.target.value,
-                }))
-              }
-            />
-            <button
-              className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
-              onClick={() => handleAddComment(post.id)}
-            >
-              Post
-            </button>
-          </div>
-        </div>
+        <CommentBox
+        postId={post.id}
+        postTitle={post.title} // Pass the post title
+        postOwner={post.user} // Pass the entire user object
+        isVisible={showChatBox[post.id]}
+        onClose={() =>
+          setShowChatBox((prev) => ({
+            ...prev,
+            [post.id]: false,
+          }))
+        }
+      />
       )}
     </>
   );

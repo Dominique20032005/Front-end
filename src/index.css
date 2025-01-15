@@ -18,6 +18,34 @@
     }
   }
   
+  @keyframes fadeInHighlight {
+    0% {
+      background-color: rgba(59, 130, 246, 0.2); /* Light blue */
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  @keyframes modal-slide-in {
+    0% {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .modal-animate-slide-in {
+    animation: modal-slide-in 0.4s ease-in-out;
+  }
+  
+  .animate-highlight {
+    animation: fadeInHighlight 1s ease-in-out;
+  }
+
   .animate-fade-in {
     animation: fade-in 0.5s ease-in-out;
   }

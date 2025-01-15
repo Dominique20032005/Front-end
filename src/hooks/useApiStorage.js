@@ -145,7 +145,7 @@ export const useApiStorage = create((set, get) => ({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create post");
+        throw new Error("Failed to delete post");
       }
     } catch (err) {
       console.error("Delete post error:", err);
@@ -287,4 +287,92 @@ export const useApiStorage = create((set, get) => ({
       throw new Error("An error occurred while downloading the file.");
     }
   },
+
+  addComment: async (postId, content) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ content }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add comment");
+      }
+
+      const data = await response.json();
+      return data; // Return the created comment
+    } catch (err) {
+      console.error("Add comment error:", err);
+      throw new Error("An error occurred while adding the comment.");
+    }
+  },
+
+  fetchComments: async (postId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`, {
+        method: "Get",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      return data; 
+    } catch (err) {
+      console.error("Add comment error:", err);
+      throw new Error("An error occurred while fetching the comment.");
+    }
+  },
+
+  likeComment: async (postId, commentId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/posts/${postId}/comments/${commentId}/like`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to like/unlike the comment");
+      }
+  
+      const data = await response.json();
+  
+      
+      return data; 
+    } catch (err) {
+      console.error("Error liking/unliking the comment:", err);
+      throw new Error("An error occurred while liking/unliking the comment.");
+    }
+  },  
+
+  deleteComment: async (postId, commentId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/posts/${postId}/comments/${commentId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete the comment");
+      }
+
+      return true; // Return true if deletion is successful
+    } catch (err) {
+      console.error("Delete comment error:", err);
+      throw new Error("An error occurred while deleting the comment.");
+    }
+  },
+
 }));
