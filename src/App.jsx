@@ -7,6 +7,8 @@ import Post from "./page/Postpage/Post";
 import Login from "./page/Login/Login";
 import Signup from "./page/Signup/Signup";
 import SavePost from "./page/SavePostpage/SavePost";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./App.css";
 
 const App = () => {
