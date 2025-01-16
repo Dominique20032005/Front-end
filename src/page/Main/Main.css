@@ -1,3 +1,4 @@
-.board {
-    /* border: 2px solid #000; */
+.btn:hover {
+    transform: scale(1.05);
+    transition: 0.1 s ease-in-out;
 }

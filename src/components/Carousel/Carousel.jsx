@@ -1,8 +1,9 @@
 import React from 'react';
 import Carousel from 'react-bootstrap/Carousel';
-import img0 from '../assets/Images/img.jpg'
-import img1 from '../assets/Images/img1.jpg'
-import img2 from '../assets/Images/img2.jpg'
+import img0 from '../../assets/Images/img.jpg'
+import img1 from '../../assets/Images/img1.jpg'
+import img2 from '../../assets/Images/img2.jpg'
+import './Carousel.css'
 
 
 const carouselSlides = [
@@ -26,13 +27,13 @@ const carouselSlides = [
   },
 ];
 
-const CarouselItem = ({ autoplay = true, interval = 1000, fade = true }) => {
+const CarouselItem = ({ autoplay = true, interval = 3000, fade = true }) => {
   return (
-    <Carousel interval={autoplay ? interval : null} fade={fade}>
+    <Carousel interval={autoplay ? interval : null} fade={fade} controls={false} indicators={false}>
       {carouselSlides.map((slide) => (
         <Carousel.Item key={slide.id}>
           <img
-            className="d-block w-full"
+            className="d-block w-full rounded-lg img-shadow"
             src={slide.image}
             alt={slide.title}
             style={{ height: '600px', width: '900px', objectFit: 'cover' }}
