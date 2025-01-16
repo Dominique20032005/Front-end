@@ -11,11 +11,11 @@ const Main = () => {
     <>
       <Header></Header>
       <div className='board w-full h-screen flex items-center justify-center bg-gray-900 text-gray-100'>
-        <div className="left w-6/12 px-5">
-          <h1 className='oswald-regular text-4xl'><span className='text-teal-400'>Welcome to <span className='oswald-bold'>Learning-Social</span></span>. Join with us for more interesting content</h1>
+        <div className="left w-1/2 px-5">
+          <h1 className='oswald-regular text-4xl w-3/4 my-5'><span className='text-teal-400'>Welcome to <span className='oswald-bold'>Learning-Social</span></span>. Join with us for more interesting content</h1>
           <h2 className='text-2xl'>For more post? <Link to='/post' className='btn text-2xl font-bold cursor-pointer p-3 rounded-lg text-gray-100 bg-gray-800/50 backdrop-blur border border-gray-700 text-center space-y-2'>Click here</Link></h2>
         </div>
-        <div className="right w-6/12">
+        <div className="right w-1/2">
         <CarouselItem/>
         </div>
       </div>
