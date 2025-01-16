@@ -6,14 +6,18 @@ import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import { createAvatar } from "@dicebear/core";
 import { botttsNeutral } from "@dicebear/collection";
-import DeleteCommentModal from "./DeleteCommentModal"; // Import the new component
+import DeleteCommentModal from "./DeleteCommentModal";
+import Reply from "./Reply"; // Import the Reply component
+import { AiOutlineLike } from "react-icons/ai"; // Importing like icon from react-icons
 
 const CommentBox = ({ postId, postTitle, postOwner, isVisible, onClose }) => {
-  const { fetchComments, addComment, likeComment, deleteComment } =
+  const { fetchComments, addComment, likeComment, deleteComment, addReply, likeReply, deleteReply } =
     useApiStorage();
   const { user, isLoggedIn } = useAuthStorage();
   const [comments, setComments] = useState([]);
+  const [replyInputs, setReplyInputs] = useState({}); // State to manage reply input visibility
   const [newComment, setNewComment] = useState("");
+  const [newReply, setNewReply] = useState(""); // State for new reply input
   const [loading, setLoading] = useState(false);
   const [loadingComments, setLoadingComments] = useState(true);
   const [animationCommentId, setAnimationCommentId] = useState(null);
@@ -44,9 +48,7 @@ const CommentBox = ({ postId, postTitle, postOwner, isVisible, onClose }) => {
     try {
       const addedComment = await addComment(postId, newComment);
       setAnimationCommentId(addedComment.id);
-      const fetchedComments = await fetchComments(postId);
-      const sortedComments = fetchedComments.sort((a, b) => b.id - a.id);
-      setComments(sortedComments);
+      loadComments(); // Refresh comments after adding a new one
       setNewComment("");
       toast.success("Comment added successfully!");
       setTimeout(() => setAnimationCommentId(null), 500);
@@ -82,14 +84,50 @@ const CommentBox = ({ postId, postTitle, postOwner, isVisible, onClose }) => {
     try {
       await deleteComment(postId, commentToDelete);
       toast.success("Comment deleted successfully!");
-      const fetchedComments = await fetchComments(postId);
-      const sortedComments = fetchedComments.sort((a, b) => b.id - a.id);
-      setComments(sortedComments);
+      loadComments(); // Refresh comments after deleting
       setCommentToDelete(null);
     } catch (error) {
       console.error("Failed to delete comment:", error);
       toast.error("Failed to delete comment. Please try again.");
     }
+  };
+
+  const handleAddReply = async (commentId, content) => {
+    try {
+      const addedReply = await addReply(postId, commentId, content);
+      loadComments(); // Refresh comments to include new reply
+      setReplyInputs((prev) => ({ ...prev, [commentId]: false })); // Hide input after reply
+    } catch (error) {
+      console.error("Failed to add reply:", error);
+      toast.error("Failed to add reply. Please try again.");
+    }
+  };
+
+  const handleLikeReply = async (commentId, replyId) => {
+    try {
+      await likeReply(postId, commentId, replyId);
+      loadComments(); // Refresh comments to update reply like status
+    } catch (error) {
+      console.error("Failed to like reply:", error);
+      toast.error("Failed to like reply. Please try again.");
+    }
+  };
+
+  const handleDeleteReply = async (commentId, replyId) => {
+    try {
+      await deleteReply(postId, commentId, replyId);
+      loadComments(); // Refresh comments after deleting reply
+    } catch (error) {
+      console.error("Failed to delete reply:", error);
+      toast.error("Failed to delete reply. Please try again.");
+    }
+  };
+
+  const toggleReplyInput = (commentId) => {
+    setReplyInputs((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
   };
 
   const generateAvatar = (name) => {
@@ -101,6 +139,8 @@ const CommentBox = ({ postId, postTitle, postOwner, isVisible, onClose }) => {
   if (!isVisible) {
     return null;
   }
+
+  console.log(comments);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 animate-fade-in">
@@ -130,74 +170,121 @@ const CommentBox = ({ postId, postTitle, postOwner, isVisible, onClose }) => {
             <div className="flex justify-center py-4">
               <Loader className="w-6 h-6 text-gray-400 animate-spin" />
             </div>
+          ) : comments.length === 0 ? (
+            <div className="flex justify-center items-center h-full">
+              <p className="text-gray-400 text-lg font-semibold">
+                No comments yet
+              </p>
+            </div>
           ) : (
             <div className="space-y-4">
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className={`relative flex items-start gap-3 ${
+                  className={`relative flex flex-col gap-3 ${
                     comment.id === animationCommentId ? "animate-highlight" : ""
                   }`}
                 >
-                  <img
-                    src={generateAvatar(comment.user.avatar)}
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <div className="flex flex-col flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-gray-300 font-semibold text-sm">
-                        {comment.user.userName}
-                      </p>
-                      {comment.user.id === postOwner.id && (
-                        <span className="text-xs font-medium text-blue-500">
-                          Author
-                        </span>
-                      )}
-                      {comment.user.id === user?.id && (
-                        <button
-                          className="text-xs text-red-500 px-1 py-0.5 rounded hover:bg-red-500 hover:text-white transition-all"
-                          onClick={() => setCommentToDelete(comment.id)}
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                    <div
-                      className="bg-gray-700 p-3 rounded-lg max-w-full break-words relative"
-                      style={{
-                        wordWrap: "break-word",
-                        width: "fit-content",
-                        minWidth: "50px",
-                      }}
-                    >
-                      <p className="text-gray-400 text-sm">
-                        {comment.commentContent}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
-                      <span>
-                        {formatDistanceToNow(new Date(comment.createdAt), {
-                          addSuffix: true,
-                        })}
-                      </span>
-                      <button
-                        className={`${
-                          comment.likedByCurrentUser
-                            ? "text-green-500"
-                            : "text-gray-500 hover:text-green-500"
-                        }`}
-                        onClick={() => handleLikeComment(comment.id)}
+                  <div className="flex items-start gap-3">
+                    <img
+                      src={generateAvatar(comment.user.avatar)}
+                      alt="User Avatar"
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <div className="flex flex-col flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-gray-300 font-semibold text-sm">
+                          {comment.user.userName}
+                        </p>
+                        {comment.user.id === postOwner.id && (
+                          <span className="text-xs font-medium text-blue-500">
+                            Author
+                          </span>
+                        )}
+                        {comment.user.id === user?.id && (
+                          <button
+                            className="text-xs text-red-500 px-1 py-0.5 rounded hover:bg-red-500 hover:text-white transition-all"
+                            onClick={() => setCommentToDelete(comment.id)}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <div
+                        className="bg-gray-700 p-3 rounded-lg max-w-full break-words relative"
+                        style={{
+                          display: "inline-block",
+                          wordBreak: "break-word",
+                          overflowWrap: "anywhere",
+                          maxWidth: "calc(100% - 100%)",
+                          minWidth: "fit-content",
+                        }}
                       >
-                        {comment.likedByCurrentUser ? "Liked" : "Like"}
-                      </button>
-                      <button className="hover:text-blue-500">Reply</button>
-                    </div>
-
-                    <div>
-                        
+                        <p className="text-gray-400 text-sm">
+                          {comment.commentContent}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                        <span>
+                          {formatDistanceToNow(new Date(comment.createdAt), {
+                            addSuffix: true,
+                          })}
+                        </span>
+                        <button
+                          className={`${
+                            comment.likedByCurrentUser
+                              ? "text-green-500"
+                              : "text-gray-500 hover:text-green-500"
+                          }`}
+                          onClick={() => handleLikeComment(comment.id)}
+                        >
+                          {comment.likedByCurrentUser ? "Liked" : "Like"}
+                        </button>
+                        <button
+                          className="hover:text-blue-500"
+                          onClick={() => toggleReplyInput(comment.id)}
+                        >
+                          Reply
+                        </button>
+                        <span className="flex items-center gap-1 text-gray-400">
+                          <AiOutlineLike className="w-4 h-4" />
+                          <span>{comment.likesCount || 0}</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Replies Section */}
+                  {comment.replies.map((reply) => (
+                    
+                    <Reply
+                      key={reply.id}
+                      reply={reply}
+                      postOwner={postOwner}
+                      user={user}
+                      onLikeReply={(replyId) => handleLikeReply(comment.id, replyId)}
+                      onDeleteReply={(replyId) => handleDeleteReply(comment.id, replyId)}
+                      showDeleteButton={reply.user.id === user?.id}
+                    />
+                  ))}
+
+                  {/* Add Reply Input */}
+                  {replyInputs[comment.id] && (
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        className="bg-gray-800 text-gray-300 rounded-full px-4 py-2 w-full"
+                        placeholder="Write a reply..."
+                        value={newReply}
+                        onChange={(e) => setNewReply(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && newReply.trim() !== "") {
+                            handleAddReply(comment.id, newReply);
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -226,7 +313,7 @@ const CommentBox = ({ postId, postTitle, postOwner, isVisible, onClose }) => {
                       return;
                     }
                     handleAddComment();
-                  }                
+                  }
                 }}
               />
               <button

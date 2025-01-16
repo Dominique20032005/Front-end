@@ -368,11 +368,38 @@ export const useApiStorage = create((set, get) => ({
         throw new Error("Failed to delete the comment");
       }
 
-      return true; // Return true if deletion is successful
+      return true; 
     } catch (err) {
       console.error("Delete comment error:", err);
       throw new Error("An error occurred while deleting the comment.");
     }
   },
+
+  addReply: async (postId, commentId, content, parentReplyId = null) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${commentId}/reply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          content, 
+          parentReplyId, 
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to add reply");
+      }
+  
+      const data = await response.json();
+      return data; 
+    } catch (err) {
+      console.error("Error adding reply:", err);
+      throw new Error("An error occurred while adding the reply.");
+    }
+  },
+  
 
 }));

@@ -32,11 +32,10 @@ export default function PostInfo({
     const savedComments = localStorage.getItem("newCommentsState");
     return savedComments ? JSON.parse(savedComments) : {};
   });
+  const [totalComments, setTotalComments] = useState(0); // State for total comments
 
   const { user, isLoggedIn } = useAuthStorage();
-
-  const { getPostList, deletePost, likePost, savePost, downloadFile, posts } =
-    useApiStorage();
+  const { fetchComments, downloadFile } = useApiStorage();
 
   useEffect(() => {
     localStorage.setItem("showChatBoxState", JSON.stringify(showChatBox));
@@ -45,6 +44,24 @@ export default function PostInfo({
   useEffect(() => {
     localStorage.setItem("newCommentsState", JSON.stringify(newComments));
   }, [newComments]);
+
+  // Fetch and calculate total comments
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const comments = await fetchComments(post.id);
+        const total = comments.reduce(
+          (count, comment) => count + 1 + (comment.replies ? comment.replies.length : 0),
+          0
+        );
+        setTotalComments(total);
+      } catch (error) {
+        console.error("Failed to fetch comments:", error);
+      }
+    };
+
+    loadComments();
+  }, [post.id, fetchComments]);
 
   const handleDeleteClick = (postId) => {
     setPostToDelete(postId);
@@ -188,7 +205,7 @@ export default function PostInfo({
           onClick={() => handleToggleChatBox(post.id)}
         >
           <MessageCircle className="w-5 h-5" />
-          <span>Comments</span>
+          <span>Comments ({totalComments})</span>
         </button>
         <button
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -208,17 +225,17 @@ export default function PostInfo({
       {/* Comments Section */}
       {showChatBox[post.id] && (
         <CommentBox
-        postId={post.id}
-        postTitle={post.title} // Pass the post title
-        postOwner={post.user} // Pass the entire user object
-        isVisible={showChatBox[post.id]}
-        onClose={() =>
-          setShowChatBox((prev) => ({
-            ...prev,
-            [post.id]: false,
-          }))
-        }
-      />
+          postId={post.id}
+          postTitle={post.title} // Pass the post title
+          postOwner={post.user} // Pass the entire user object
+          isVisible={showChatBox[post.id]}
+          onClose={() =>
+            setShowChatBox((prev) => ({
+              ...prev,
+              [post.id]: false,
+            }))
+          }
+        />
       )}
     </>
   );

@@ -11,8 +11,10 @@ const Footer = () => {
         <div className="flex items-center space-x-2">
           <h1 className="text-base font-bold">Learning Social</h1>
         </div>
-        <p className="text-sm text-gray-400"> 
-          Created and designed on Dec 7th 2024, UIT-Learning is the place where you can share and explore. We hope that UIT-Learning can help you with your education process, meet new people, learning new things that you wanted.
+        <p className="text-sm text-gray-400">
+          Created and designed on Dec 7th 2024, UIT-Learning is the place where
+          you can share and explore. We hope that UIT-Learning can help you with
+          your education process, meet new people, and learn new things that you wanted.
         </p>
       </div>
 
@@ -22,19 +24,19 @@ const Footer = () => {
         <nav className="flex flex-col space-y-1">
           <Link
             to="/"
-            className="hover:text-teal-400 transition duration-300 text-sm" // Increased font size
+            className="hover:text-teal-400 transition duration-300 text-sm"
           >
             Home
           </Link>
           <Link
             to="/about"
-            className="hover:text-teal-400 transition duration-300 text-sm" // Increased font size
+            className="hover:text-teal-400 transition duration-300 text-sm"
           >
             About
           </Link>
           <Link
             to="/post"
-            className="hover:text-teal-400 transition duration-300 text-sm" // Increased font size
+            className="hover:text-teal-400 transition duration-300 text-sm"
           >
             Post
           </Link>
@@ -46,28 +48,30 @@ const Footer = () => {
         <h2 className="text-base font-bold">Contact</h2>
         <p className="text-sm text-gray-400">
           <a
-            href="https://fb.com/bhtcnpm"
+            href="https://www.facebook.com/nhad1702"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-teal-400 transition duration-300"
           >
-            fb.com/bhtcnpm
+            facebook.com/nhad1702
           </a>
         </p>
-        <p className="text-sm text-gray-400"> 
+        <p className="text-sm text-gray-400">
           <a
-            href="mailto:admin@bhtcnpm.com"
+            href="https://www.facebook.com/ho.kevin.583"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-teal-400 transition duration-300"
           >
-            admin@bhtcnpm.com
+            facebook.com/ho.kevin.583
           </a>
         </p>
       </div>
 
       {/* GitHub Icon */}
-      <div className="text-3xl mr-10"> 
+      <div className="text-3xl mr-10">
         <a
-          href="https://github.com/orgs/Software-project-sem4/repositories" 
+          href="https://github.com/orgs/Software-project-sem4/repositories"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-teal-400 transition duration-300"
