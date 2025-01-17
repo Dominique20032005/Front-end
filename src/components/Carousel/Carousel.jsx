@@ -39,7 +39,7 @@ const CarouselItem = ({ autoplay = true, interval = 2000, fade = true }) => {
               className="img-shadow"
               src={slide.image}
               alt={`Slide ${slide.id}`}
-              onClick={handleImageClick} // Navigate to the next image on click
+              onClick={handleImageClick} 
             />
           </Carousel.Item>
         ))}

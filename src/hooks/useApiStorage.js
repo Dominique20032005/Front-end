@@ -8,7 +8,6 @@ export const useApiStorage = create((set, get) => ({
   error: null, // Error state
   posts: [],
   comments: [],
-  totalComments: 0,
 
   logIn: async (formData) => {
     try {
@@ -406,14 +405,6 @@ export const useApiStorage = create((set, get) => ({
     }
   },
   
-  computeTotalComments: (comments) => {
-    const total = comments.reduce(
-      (count, comment) =>
-        count + 1 + (comment.replies ? comment.replies.length : 0),
-      0
-    );
-    set({ totalComments: total });
-  },
 
   deleteReply: async (postId, commentId, replyId) => {
     try {

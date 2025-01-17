@@ -34,7 +34,7 @@ export default function PostInfo({
   });
 
   const { user, isLoggedIn } = useAuthStorage();
-  const { fetchComments, downloadFile, computeTotalComments, totalComments } = useApiStorage();
+  const { fetchComments, downloadFile } = useApiStorage();
 
   useEffect(() => {
     localStorage.setItem("showChatBoxState", JSON.stringify(showChatBox));
@@ -48,8 +48,7 @@ export default function PostInfo({
   useEffect(() => {
     const loadComments = async () => {
       try {
-        const comments = await fetchComments(post.id);
-        computeTotalComments(comments)
+        await fetchComments(post.id);
       } catch (error) {
         console.error("Failed to fetch comments:", error);
       }
@@ -200,7 +199,7 @@ export default function PostInfo({
           onClick={() => handleToggleChatBox(post.id)}
         >
           <MessageCircle className="w-5 h-5" />
-          <span>Comments ({totalComments})</span>
+          <span>Comments ({post.totalCommentsReplies})</span>
         </button>
         <button
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
