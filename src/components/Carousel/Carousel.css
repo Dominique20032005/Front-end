@@ -1,3 +1,47 @@
-.img-shadow {
-    box-shadow: 0px 4px 20px rgba(255, 255, 255, 2); 
-}
+.carousel-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #141E30, #243B55);
+    padding: 20px;
+    border-radius: 20px;
+    margin: 20px auto;
+    max-width: 90%;
+  }
+  
+  .img-shadow {
+    width: 800px; /* Fixed width */
+    height: 400px; /* Fixed height */
+    object-fit: cover; /* Ensures image covers the container without distortion */
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .img-shadow:hover {
+    transform: scale(1.08);
+    box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.6);
+  }
+  
+  .carousel-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    gap: 10px;
+  }
+  
+  .indicator-dot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .indicator-dot.active {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  

@@ -1,4 +1,26 @@
-.btn:hover {
+.main-board {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: linear-gradient(to bottom, #0f172a, #1e293b);
+    padding-bottom: 100px;
+  }
+  
+  .main-left {
+    text-align: left;
+  }
+  
+  .main-btn {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .main-btn:hover {
     transform: scale(1.05);
-    transition: 0.1 s ease-in-out;
-}
+  }
+  
+  .main-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  

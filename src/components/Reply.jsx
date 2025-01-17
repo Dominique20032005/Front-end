@@ -3,13 +3,11 @@ import React from "react";
 import { formatDistanceToNow } from "date-fns";
 import { createAvatar } from "@dicebear/core";
 import { botttsNeutral } from "@dicebear/collection";
-import { AiOutlineLike } from "react-icons/ai";
 
 const Reply = ({
   reply,
   postOwner,
   user,
-  onLikeReply,
   onDeleteReply,
   showDeleteButton,
 }) => {
@@ -37,7 +35,7 @@ const Reply = ({
           {showDeleteButton && (
             <button
               className="text-xs text-red-500 px-1 py-0.5 rounded hover:bg-red-500 hover:text-white transition-all"
-              onClick={() => onDeleteReply(reply.id)}
+              onClick={() => onDeleteReply(reply.commentId, reply.id)}
             >
               ✕
             </button>
@@ -60,20 +58,6 @@ const Reply = ({
             {formatDistanceToNow(new Date(reply.createdAt), {
               addSuffix: true,
             })}
-          </span>
-          <button
-            className={`${
-              reply.likedByCurrentUser
-                ? "text-green-500"
-                : "text-gray-500 hover:text-green-500"
-            }`}
-            onClick={() => onLikeReply(reply.id)}
-          >
-            {reply.likedByCurrentUser ? "Liked" : "Like"}
-          </button>
-          <span className="flex items-center gap-1 text-gray-400">
-            <AiOutlineLike className="w-4 h-4" />
-            <span>{reply.likesCount || 0}</span>
           </span>
         </div>
       </div>

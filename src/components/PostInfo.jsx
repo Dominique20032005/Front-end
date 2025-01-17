@@ -32,10 +32,9 @@ export default function PostInfo({
     const savedComments = localStorage.getItem("newCommentsState");
     return savedComments ? JSON.parse(savedComments) : {};
   });
-  const [totalComments, setTotalComments] = useState(0); // State for total comments
 
   const { user, isLoggedIn } = useAuthStorage();
-  const { fetchComments, downloadFile } = useApiStorage();
+  const { fetchComments, downloadFile, computeTotalComments, totalComments } = useApiStorage();
 
   useEffect(() => {
     localStorage.setItem("showChatBoxState", JSON.stringify(showChatBox));
@@ -50,11 +49,7 @@ export default function PostInfo({
     const loadComments = async () => {
       try {
         const comments = await fetchComments(post.id);
-        const total = comments.reduce(
-          (count, comment) => count + 1 + (comment.replies ? comment.replies.length : 0),
-          0
-        );
-        setTotalComments(total);
+        computeTotalComments(comments)
       } catch (error) {
         console.error("Failed to fetch comments:", error);
       }

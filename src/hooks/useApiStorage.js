@@ -7,6 +7,8 @@ const API_BASE_URL =
 export const useApiStorage = create((set, get) => ({
   error: null, // Error state
   posts: [],
+  comments: [],
+  totalComments: 0,
 
   logIn: async (formData) => {
     try {
@@ -321,8 +323,11 @@ export const useApiStorage = create((set, get) => ({
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-
+      
       const data = await response.json();
+
+      set({ error: null, comments: data });
+
       return data; 
     } catch (err) {
       console.error("Add comment error:", err);
@@ -401,5 +406,34 @@ export const useApiStorage = create((set, get) => ({
     }
   },
   
+  computeTotalComments: (comments) => {
+    const total = comments.reduce(
+      (count, comment) =>
+        count + 1 + (comment.replies ? comment.replies.length : 0),
+      0
+    );
+    set({ totalComments: total });
+  },
+
+  deleteReply: async (postId, commentId, replyId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/posts/${postId}/comments/${commentId}/replies/${replyId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete the reply");
+      }
+  
+      return true; // Return success
+    } catch (err) {
+      console.error("Delete reply error:", err);
+      throw new Error("An error occurred while deleting the reply.");
+    }
+  }
 
 }));
